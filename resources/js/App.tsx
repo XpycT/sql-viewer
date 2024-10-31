@@ -7,12 +7,12 @@ import { QueryResults } from '@/components/QueryResults';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Toaster } from '@/components/ui/toaster';
 
-
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return localStorage.getItem('theme') as 'light' | 'dark' || 'light';
   });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [query, setQuery] = useState('SELECT * FROM users;');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -43,7 +43,7 @@ function App() {
           <div className="h-[calc(100vh-4rem)] flex flex-col">
             <ResizablePanelGroup direction="vertical">
               <ResizablePanel defaultSize={50}>
-                <QueryEditor />
+                <QueryEditor query={query} onQueryChange={setQuery} />
               </ResizablePanel>
 
               <ResizableHandle />

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
@@ -6,14 +6,18 @@ import { Download, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
-export function QueryEditor() {
+interface QueryEditorProps {
+  query: string;
+  onQueryChange: (query: string) => void;
+}
+
+export function QueryEditor({ query, onQueryChange }: QueryEditorProps) {
   const { toast } = useToast();
-  const [query, setQuery] = useState('SELECT * FROM users;');
   const codeEditorRef = useRef<any>(null)
 
   const handleChange = useCallback((value: string) => {
-    setQuery(value);
-  }, []);
+    onQueryChange(value);
+  }, [onQueryChange]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.altKey && event.key === 'Enter') {
@@ -96,18 +100,18 @@ export function QueryEditor() {
       </div>
       <div className="flex-1 border rounded-md overflow-hidden">
         <CodeMirror
-            value={query}
-            height="100%"
-            style={{ height: '100%' }}
-            extensions={[sql()]}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            ref={codeEditorRef}
-            theme={isDark ? githubDark : githubLight}
-            basicSetup={{
-              lineNumbers: true,
-              allowMultipleSelections: false
-            }}
+          value={query}
+          height="100%"
+          style={{ height: '100%' }}
+          extensions={[sql()]}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          ref={codeEditorRef}
+          theme={isDark ? githubDark : githubLight}
+          basicSetup={{
+            lineNumbers: true,
+            allowMultipleSelections: false
+          }}
         />
       </div>
     </div>

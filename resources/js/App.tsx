@@ -5,6 +5,8 @@ import { Sidebar } from '@/components/Sidebar';
 import { QueryEditor } from '@/components/QueryEditor';
 import { QueryResults } from '@/components/QueryResults';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Toaster } from '@/components/ui/toaster';
+
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -53,6 +55,7 @@ function App() {
           </div>
         </main>
       </div>
+      <Toaster />
     </div>
   );
 }

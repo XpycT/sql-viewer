@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data for demonstration
 const mockData = {
@@ -32,6 +33,7 @@ const mockData = {
 type Row = typeof mockData.rows[0];
 
 export function QueryResults() {
+  const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState({});
 
@@ -84,7 +86,7 @@ export function QueryResults() {
           .join(',')
       )
       .join('\n');
-    
+
     const csv = `${headers}\n${rows}`;
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -95,6 +97,10 @@ export function QueryResults() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    toast({
+      title: 'Downloaded',
+      description: 'Query results exported to downloads folder',
+    });
   };
 
   return (
@@ -104,7 +110,7 @@ export function QueryResults() {
           <Download className="h-4 w-4 mr-2" />
           Export CSV
         </Button>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">

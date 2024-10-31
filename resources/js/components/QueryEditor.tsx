@@ -4,8 +4,10 @@ import { sql } from '@codemirror/lang-sql';
 import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
 import { Download, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 export function QueryEditor() {
+  const { toast } = useToast();
   const [query, setQuery] = useState('SELECT * FROM users;');
   const codeEditorRef = useRef<any>(null)
 
@@ -33,6 +35,10 @@ export function QueryEditor() {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+    toast({
+      title: 'Downloaded',
+      description: 'Query downloaded to downloads folder',
+    })
   };
 
   async function copyTextToClipboard(text: string) {
@@ -46,6 +52,10 @@ export function QueryEditor() {
   const copyQuery = async () => {
     try {
       await copyTextToClipboard(query);
+      toast({
+        title: 'Copied',
+        description: 'Query copied to clipboard',
+      })
     } catch (err) {
       console.error('Failed to copy text:', err);
     }

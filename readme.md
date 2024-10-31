@@ -10,6 +10,8 @@
     <a href="#usage">Usage</a>
 </p>
 
+![sql-viewer](https://github.com/user-attachments/assets/5a7730a9-1cac-4b6c-a00d-6fa938a32d48)
+
 ### Documentation
 
 Documentation can be found on the [official website](#).

@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface QueryResultsProps {
   results: {
@@ -133,7 +134,7 @@ export function QueryResults({ results }: QueryResultsProps) {
       </div>
 
       <div className="border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
+        <ScrollArea>
           <table className="w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -166,7 +167,7 @@ export function QueryResults({ results }: QueryResultsProps) {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollArea>
       </div>
 
       <div className="flex items-center justify-end space-x-2 py-4">

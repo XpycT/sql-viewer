@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -82,7 +83,8 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
       "fixed top-[4rem] left-0 h-[calc(100vh-4rem)] flex flex-col border-r bg-background transition-all duration-300",
       isCollapsed ? "w-[80px]" : "w-[250px]"
     )}>
-      <div className="flex-1 overflow-auto">
+    <ScrollArea className="flex-1">
+      <div>
         {isCollapsed ? (
           <div className="py-4">
             {tables.map((table) => (
@@ -139,6 +141,7 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
           </div>
         )}
       </div>
+      </ScrollArea>
       <div className="p-2 border-t">
         <Button
           variant="ghost"

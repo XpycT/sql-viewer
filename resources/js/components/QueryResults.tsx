@@ -92,7 +92,7 @@ export function QueryResults({ results }: QueryResultsProps) {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (!results) {
+  if (!results || results.rows.length === 0) {
     return null;
   }
 

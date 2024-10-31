@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
@@ -6,27 +6,29 @@ import { Download, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function QueryEditor() {
+  const { toast } = useToast()
+  const [query, setQuery] = useState('SELECT * FROM users;');
+  const codeEditorRef = useRef<any>(null)
+
   const handleChange = useCallback((value: string) => {
-    // Handle query changes
+    setQuery(value);
   }, []);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.altKey && event.key === 'Enter') {
-      const selection = window.getSelection()?.toString();
-      if (selection) {
-        console.log('Selected text:', selection);
+      event.preventDefault()
+      const editor = codeEditorRef.current?.view
+      if (editor) {
+        const selection = editor.state.selection.ranges[0]
+        const selectedText = editor.state.sliceDoc(selection.from, selection.to)
+        console.log(`Выполняется запрос: ${selectedText || query}`, selection, selectedText)
       }
     }
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
+  }, [query])
 
   const downloadQuery = () => {
     const element = document.createElement('a');
-    const file = new Blob(['SELECT * FROM users;'], { type: 'text/plain' });
+    const file = new Blob([query], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = 'query.sql';
     document.body.appendChild(element);
@@ -34,13 +36,42 @@ export function QueryEditor() {
     document.body.removeChild(element);
   };
 
+  async function copyTextToClipboard(text: string) {
+    if ('clipboard' in navigator) {
+      return await navigator.clipboard.writeText(text);
+    } else {
+      return document.execCommand('copy', true, text);
+    }
+  }
+
   const copyQuery = async () => {
     try {
-      await navigator.clipboard.writeText('SELECT * FROM users;');
+      await copyTextToClipboard(query);
     } catch (err) {
       console.error('Failed to copy text:', err);
     }
   };
+
+  const [isDark, setIsDark] = useState(() =>
+    document.documentElement.classList.contains('dark')
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          setIsDark(document.documentElement.classList.contains('dark'));
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="h-full flex flex-col p-4 bg-background">
@@ -56,38 +87,18 @@ export function QueryEditor() {
       </div>
       <div className="flex-1 border rounded-md overflow-hidden">
         <CodeMirror
-          value="SELECT * FROM users;"
-          height="100%"
-          style={{ height: '100%' }}
-          extensions={[sql()]}
-          onChange={handleChange}
-          theme={document.documentElement.classList.contains('dark') ? githubDark : githubLight}
-          basicSetup={{
-            lineNumbers: true,
-            highlightActiveLineGutter: true,
-            highlightSpecialChars: true,
-            history: true,
-            foldGutter: true,
-            drawSelection: true,
-            dropCursor: true,
-            allowMultipleSelections: true,
-            indentOnInput: true,
-            syntaxHighlighting: true,
-            bracketMatching: true,
-            closeBrackets: true,
-            autocompletion: true,
-            rectangularSelection: true,
-            crosshairCursor: true,
-            highlightActiveLine: true,
-            highlightSelectionMatches: true,
-            closeBracketsKeymap: true,
-            defaultKeymap: true,
-            searchKeymap: true,
-            historyKeymap: true,
-            foldKeymap: true,
-            completionKeymap: true,
-            lintKeymap: true,
-          }}
+            value={query}
+            height="100%"
+            style={{ height: '100%' }}
+            extensions={[sql()]}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            ref={codeEditorRef}
+            theme={isDark ? githubDark : githubLight}
+            basicSetup={{
+              lineNumbers: true,
+              allowMultipleSelections: false
+            }}
         />
       </div>
     </div>

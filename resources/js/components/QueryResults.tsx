@@ -8,7 +8,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, Download, Settings2, Eye, EyeOff } from 'lucide-react';
+import { ArrowDown, ArrowUp, Download, Settings2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,

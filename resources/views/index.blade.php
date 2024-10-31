@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SQL Viewer</title>
-    @viteReactRefresh()
+    @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/main.tsx'], 'vendor/sql-viewer')
 </head>
 <body>
     <div id="root"></div>
     <script>
         window.sqlViewerConfig = {
-            hiddenFields: @json(config('sql-viewer.hidden_fields'))
+            hiddenFields: @json(config('sql-viewer.hidden_fields')),
+            path: @json(config('sql-viewer.path')),
         };
     </script>
 </body>

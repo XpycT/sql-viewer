@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from '@/lib/utils';
+import { fetchTables } from '@/api';
 
 interface SidebarProps {
   onCollapsedChange: (collapsed: boolean) => void;
@@ -32,11 +33,10 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTables = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/sql-viewer/tables');
-        const data = await response.json();
-        setTables(data.tables);
+        const data = await fetchTables();
+        setTables(data);
       } catch (error) {
         console.error('Ошибка при загрузке таблиц:', error);
       } finally {
@@ -44,7 +44,7 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
       }
     };
 
-    fetchTables();
+    fetchData();
   }, []);
 
   const handleCollapse = () => {

@@ -5,6 +5,7 @@ import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
 import { Download, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { fetchQuery } from '@/api';
 
 interface QueryEditorProps {
   query: string;
@@ -23,23 +24,7 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
 
   const executeQuery = async (sql: string) => {
     try {
-      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-      const response = await fetch('/sql-viewer/execute', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken || '',
-        },
-        body: JSON.stringify({ query: sql }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Query execution error');
-      }
-
+      const data = await fetchQuery(sql); // Используйте функцию из API
       onQueryResult(data);
       toast({
         title: 'Executed',
@@ -50,7 +35,7 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
     }
   };
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.altKey && event.key === 'Enter') {
       event.preventDefault()
       const editor = codeEditorRef.current?.view

@@ -51,7 +51,7 @@ class SqlViewerServiceProvider extends ServiceProvider
 
     protected function registerGate(): void
     {
-        Gate::define('viewSqlViewer', function ($user) {
+        Gate::define('viewSqlViewer', function ($user = null) {
             return $this->app->environment('local') ||
                    (config('sql-viewer.enabled', true) &&
                     in_array($user->email, config('sql-viewer.allowed_emails', [])));

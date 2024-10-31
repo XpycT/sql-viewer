@@ -41,10 +41,10 @@ class SqlViewerController extends Controller
         try {
             $query = $request->input('query');
 
-            foreach (config('sql-viewer.forbidden_querys') as $forbiddenQuery) {
-                if (stripos($query, $forbiddenQuery) !== false) {
+            foreach (config('sql-viewer.forbidden_actions') as $forbiddenAction) {
+                if (stripos($query, $forbiddenAction) !== false) {
                     return response()->json([
-                        'error' => 'Запрос запрещен: ' . $forbiddenQuery
+                        'error' => 'Forbidden action: ' . $forbiddenAction
                     ], 403);
                 }
             }

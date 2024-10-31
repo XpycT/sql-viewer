@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Table } from 'lucide-react';
 import {
   Accordion,
@@ -9,35 +9,42 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const tables = [
-  {
-    name: 'users',
-    columns: [
-      { name: 'id', type: 'int' },
-      { name: 'username', type: 'varchar(255)' },
-      { name: 'email', type: 'varchar(255)' },
-      { name: 'created_at', type: 'timestamp' },
-    ],
-  },
-  {
-    name: 'products',
-    columns: [
-      { name: 'id', type: 'int' },
-      { name: 'name', type: 'varchar(255)' },
-      { name: 'price', type: 'decimal(10,2)' },
-      { name: 'category', type: 'varchar(100)' },
-      { name: 'stock', type: 'int' },
-    ],
-  },
-];
-
 interface SidebarProps {
   onCollapsedChange: (collapsed: boolean) => void;
 }
 
+// Добавляем интерфейсы
+interface Column {
+    name: string;
+    type: string;
+  }
+
+  interface Table {
+    name: string;
+    columns: Column[];
+  }
+
 export function Sidebar({ onCollapsedChange }: SidebarProps) {
   const [expanded, setExpanded] = useState<string[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [tables, setTables] = useState<Table[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        const response = await fetch('/sql-viewer/tables');
+        const data = await response.json();
+        setTables(data.tables);
+      } catch (error) {
+        console.error('Ошибка при загрузке таблиц:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTables();
+  }, []);
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -78,7 +85,11 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
               value={expanded[0]}
               onValueChange={(value) => setExpanded(value ? [value] : [])}
             >
-              {tables.map((table) => (
+                {loading ? (
+                  <p className="text-center">Loading...</p>
+                ) : (
+                    <div>
+                        {tables.map((table) => (
                 <AccordionItem key={table.name} value={table.name}>
                   <AccordionTrigger className="hover:no-underline">
                     <div className="flex items-center gap-2">
@@ -98,6 +109,9 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
                   </AccordionContent>
                 </AccordionItem>
               ))}
+                    </div>
+                )}
+
             </Accordion>
           </div>
         )}

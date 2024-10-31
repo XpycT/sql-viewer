@@ -6,3 +6,5 @@ use Xpyct\SqlViewer\Http\Controllers\SqlViewerController;
 Route::get('/', [SqlViewerController::class, 'index'])
     // ->middleware(['can:viewSqlViewer'])
     ->name('sql-viewer.index');
+
+Route::get('/tables', [SqlViewerController::class, 'getTables'])->name('sql-viewer.tables');

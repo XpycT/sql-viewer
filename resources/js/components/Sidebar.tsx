@@ -55,10 +55,32 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
     setExpanded(expanded.includes(tableName) ? [] : [tableName]);
   };
 
+  const getTableInitials = (tableName: string) => {
+    // Разделяем snake_case
+    if (tableName.includes('_')) {
+      return tableName.split('_')
+        .slice(0, 2)
+        .map(word => word[0]?.toUpperCase())
+        .join('');
+    }
+
+    // Разделяем CamelCase
+    const matches = tableName.match(/[A-Z][a-z]*/g);
+    if (matches?.length) {
+      return matches
+        .slice(0, 2)
+        .map(word => word[0])
+        .join('');
+    }
+
+    // Если обычный текст, берем первые 2 символа
+    return tableName.slice(0, 2).toUpperCase();
+  };
+
   return (
     <div className={cn(
       "fixed top-[4rem] left-0 h-[calc(100vh-4rem)] flex flex-col border-r bg-background transition-all duration-300",
-      isCollapsed ? "w-[60px]" : "w-[250px]"
+      isCollapsed ? "w-[80px]" : "w-[250px]"
     )}>
       <div className="flex-1 overflow-auto">
         {isCollapsed ? (
@@ -67,13 +89,14 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
               <div
                 key={table.name}
                 className={cn(
-                  "flex justify-center py-2 px-2 hover:bg-accent cursor-pointer",
+                  "flex justify-center items-center py-2 px-2 hover:bg-accent cursor-pointer",
                   expanded.includes(table.name) && "bg-accent"
                 )}
                 title={table.name}
                 onClick={() => handleTableClick(table.name)}
               >
                 <Table className="h-4 w-4" />
+                <div className="ml-2 rounded text-xs bg-muted p-1 uppercase">{getTableInitials(table.name)}</div>
               </div>
             ))}
           </div>

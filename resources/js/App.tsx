@@ -39,7 +39,7 @@ function App() {
 
       <div className="flex">
         <Sidebar onCollapsedChange={setIsSidebarCollapsed} />
-        <main className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-[60px]' : 'ml-[250px]'}`}>
+        <main className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-[80px]' : 'ml-[250px]'}`}>
           <div className="h-[calc(100vh-4rem)] flex flex-col">
             <ResizablePanelGroup direction="vertical">
               <ResizablePanel defaultSize={50}>

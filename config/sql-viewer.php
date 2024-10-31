@@ -23,4 +23,11 @@ return [
         'credit_card',
         'card_number'
     ],
+
+    'forbidden_querys' => [
+        'drop',
+        'truncate',
+        'delete',
+        'insert',
+    ],
 ];

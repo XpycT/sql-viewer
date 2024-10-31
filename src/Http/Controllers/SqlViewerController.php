@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class SqlViewerController extends Controller
 {
+
     public function index()
     {
         return view('sql-viewer::index');
@@ -39,6 +40,15 @@ class SqlViewerController extends Controller
     {
         try {
             $query = $request->input('query');
+
+            foreach (config('sql-viewer.forbidden_querys') as $forbiddenQuery) {
+                if (stripos($query, $forbiddenQuery) !== false) {
+                    return response()->json([
+                        'error' => 'Запрос запрещен: ' . $forbiddenQuery
+                    ], 403);
+                }
+            }
+
             $results = DB::select($query);
 
             if (empty($results)) {

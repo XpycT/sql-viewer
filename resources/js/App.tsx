@@ -6,6 +6,13 @@ import { QueryEditor } from '@/components/QueryEditor';
 import { QueryResults } from '@/components/QueryResults';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Toaster } from '@/components/ui/toaster';
+import { AlertCircle } from "lucide-react"
+
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -13,6 +20,8 @@ function App() {
   });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [query, setQuery] = useState('SELECT * FROM users;');
+  const [queryResult, setQueryResult] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -25,6 +34,16 @@ function App() {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
     document.documentElement.classList.toggle('dark');
+  };
+
+  const handleQueryResult = (result: any) => {
+    setQueryResult(result);
+    setError(null);
+  };
+
+  const handleError = (errorMessage: string) => {
+    setError(errorMessage);
+    setQueryResult(null);
   };
 
   return (
@@ -43,13 +62,30 @@ function App() {
           <div className="h-[calc(100vh-4rem)] flex flex-col">
             <ResizablePanelGroup direction="vertical">
               <ResizablePanel defaultSize={50}>
-                <QueryEditor query={query} onQueryChange={setQuery} />
+                <QueryEditor
+                  query={query}
+                  onQueryChange={setQuery}
+                  onQueryResult={handleQueryResult}
+                  onError={handleError}
+                />
               </ResizablePanel>
 
               <ResizableHandle />
 
               <ResizablePanel defaultSize={50}>
-                <QueryResults />
+                {error ? (
+                    <div className="p-4">
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>
+                            {error}
+                            </AlertDescription>
+                        </Alert>
+                    </div>
+                ) : (
+                  <QueryResults results={queryResult} />
+                )}
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>

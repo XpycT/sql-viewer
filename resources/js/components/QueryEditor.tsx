@@ -9,15 +9,42 @@ import { useToast } from '@/hooks/use-toast';
 interface QueryEditorProps {
   query: string;
   onQueryChange: (query: string) => void;
+  onQueryResult: (result: any) => void;
+  onError: (error: string) => void;
 }
 
-export function QueryEditor({ query, onQueryChange }: QueryEditorProps) {
+export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: QueryEditorProps) {
   const { toast } = useToast();
   const codeEditorRef = useRef<any>(null)
 
   const handleChange = useCallback((value: string) => {
     onQueryChange(value);
   }, [onQueryChange]);
+
+  const executeQuery = async (sql: string) => {
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+      const response = await fetch('/sql-viewer/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken || '',
+        },
+        body: JSON.stringify({ query: sql }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Ошибка выполнения запроса');
+      }
+
+      onQueryResult(data);
+    } catch (error) {
+      onError(error instanceof Error ? error.message : 'Неизвестная ошибка');
+    }
+  };
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.altKey && event.key === 'Enter') {
@@ -26,7 +53,7 @@ export function QueryEditor({ query, onQueryChange }: QueryEditorProps) {
       if (editor) {
         const selection = editor.state.selection.ranges[0]
         const selectedText = editor.state.sliceDoc(selection.from, selection.to)
-        console.log(`Выполняется запрос: ${selectedText || query}`, selection, selectedText)
+        executeQuery(selectedText || query)
       }
     }
   }, [query])

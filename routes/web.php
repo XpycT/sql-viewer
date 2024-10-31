@@ -8,3 +8,5 @@ Route::get('/', [SqlViewerController::class, 'index'])
     ->name('sql-viewer.index');
 
 Route::get('/tables', [SqlViewerController::class, 'getTables'])->name('sql-viewer.tables');
+
+Route::post('/execute', [SqlViewerController::class, 'executeQuery'])->name('sql-viewer.execute');

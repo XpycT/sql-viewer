@@ -18,28 +18,21 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 
-// Mock data for demonstration
-const mockData = {
-  columns: ['id', 'username', 'email', 'created_at'],
-  rows: [
-    { id: 1, username: 'john_doe', email: 'john@example.com', created_at: '2024-02-28' },
-    { id: 2, username: 'jane_smith', email: 'jane@example.com', created_at: '2024-02-27' },
-    { id: 3, username: 'bob_wilson', email: 'bob@example.com', created_at: '2024-02-26' },
-    { id: 4, username: 'alice_brown', email: 'alice@example.com', created_at: '2024-02-25' },
-    { id: 5, username: 'charlie_davis', email: 'charlie@example.com', created_at: '2024-02-24' },
-  ],
-};
+interface QueryResultsProps {
+  results: {
+    columns: string[];
+    rows: any[];
+  } | null;
+}
 
-type Row = typeof mockData.rows[0];
-
-export function QueryResults() {
+export function QueryResults({ results }: QueryResultsProps) {
   const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState({});
 
-  const columns = useMemo<ColumnDef<Row>[]>(
+  const columns = useMemo<ColumnDef<any>[]>(
     () =>
-      mockData.columns.map((col) => ({
+      results?.columns.map((col) => ({
         accessorKey: col,
         header: ({ column }) => {
           return (
@@ -55,12 +48,12 @@ export function QueryResults() {
             </div>
           );
         },
-      })),
-    []
+      })) || [],
+    [results?.columns]
   );
 
   const table = useReactTable({
-    data: mockData.rows,
+    data: results?.rows || [],
     columns,
     state: {
       sorting,
@@ -72,6 +65,10 @@ export function QueryResults() {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (!results) {
+    return null;
+  }
 
   const exportToCsv = () => {
     const visibleColumns = table.getAllColumns()

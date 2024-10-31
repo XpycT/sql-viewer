@@ -45,7 +45,7 @@ By default, the application is available at: `{APP_URL}/sql-viewer`.
 
 ### Authorization
 
-To authorize, add your email to the sql-query config and set enabled variable.
+To authorize, add your email to the sql-viewer config and set enabled variable.
 
 You can register a viewSqlViewer gate with your own logic. A good place to do this is in the AuthServiceProvider that ships with Laravel.
 

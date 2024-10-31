@@ -1,10 +1,11 @@
-Опубликуйте конфигурацию и ассеты:
+# Query Viewer
 
-php artisan vendor:publish --provider="Xpyct\SqlViewer\SqlViewerServiceProvider" --tag="sql-viewer-config"
-php artisan vendor:publish --provider="Xpyct\SqlViewer\SqlViewerServiceProvider" --tag="sql-viewer-assets"
+## Опубликуйте конфигурацию и ассеты
 
-Для сборки frontend части:
+php artisan sql-viewer:install
 
-cd packages/xpyct/sql-viewer
+## Для сборки frontend части
+
 npm install
 npm run build
+php artisan sql-viewer:install

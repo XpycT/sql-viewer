@@ -14,4 +14,13 @@ return [
     'allowed_emails' => [
         // 'admin@example.com',
     ],
+
+    'hidden_fields' => [
+        'password',
+        'token',
+        'secret',
+        'api_key',
+        'credit_card',
+        'card_number'
+    ],
 ];

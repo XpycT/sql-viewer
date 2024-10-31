@@ -10,5 +10,10 @@
 </head>
 <body>
     <div id="root"></div>
+    <script>
+        window.sqlViewerConfig = {
+            hiddenFields: @json(config('sql-viewer.hidden_fields'))
+        };
+    </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -8,7 +8,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, Download, Settings2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Download, Settings2, Eye, EyeOff } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,18 +18,31 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { QueryResultsField } from './QueryResultsField';
 
 interface QueryResultsProps {
   results: {
     columns: string[];
     rows: any[];
-  } | null;
+  };
 }
 
 export function QueryResults({ results }: QueryResultsProps) {
   const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const [hiddenFields, setHiddenFields] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const initHiddenFields = results?.columns.reduce((acc, col) => {
+      const shouldBeHidden = window.sqlViewerConfig?.hiddenFields?.includes(col.toLowerCase());
+      if (shouldBeHidden) {
+        acc[col] = true;
+      }
+      return acc;
+    }, {} as Record<string, boolean>);
+
+    setHiddenFields(initHiddenFields || {});
+  }, [results?.columns]);
 
   const columns = useMemo<ColumnDef<any>[]>(
     () =>
@@ -37,20 +50,32 @@ export function QueryResults({ results }: QueryResultsProps) {
         accessorKey: col,
         header: ({ column }) => {
           return (
-            <div
-              className="flex items-center space-x-2"
-              onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
-              <span>{col}</span>
-              {{
-                asc: <ArrowUp className="h-4 w-4" />,
-                desc: <ArrowDown className="h-4 w-4" />,
-              }[column.getIsSorted() as string] ?? null}
+              <div
+                className="flex items-center justify-between space-x-2"
+              >
+                <div
+                  className="flex items-center space-x-2 cursor-pointer"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                >
+                  <span>{col}</span>
+                  {{
+                    asc: <ArrowUp className="h-4 w-4" />,
+                    desc: <ArrowDown className="h-4 w-4" />,
+                  }[column.getIsSorted() as string] ?? null}
+                </div>
+              </div>
+          );
+        },
+        cell: ({ getValue }) => {
+          const value = getValue();
+          return (
+            <div className="flex items-center justify-between">
+                <QueryResultsField value={value} isHidden={hiddenFields[col]} />
             </div>
           );
         },
       })) || [],
-    [results?.columns]
+    [results?.columns, hiddenFields]
   );
 
   const table = useReactTable({
@@ -58,10 +83,10 @@ export function QueryResults({ results }: QueryResultsProps) {
     columns,
     state: {
       sorting,
-      columnVisibility,
+      columnVisibility: hiddenFields,
     },
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange: setHiddenFields,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

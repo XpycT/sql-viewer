@@ -6,7 +6,6 @@ import { Download, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function QueryEditor() {
-  const { toast } = useToast()
   const [query, setQuery] = useState('SELECT * FROM users;');
   const codeEditorRef = useRef<any>(null)
 

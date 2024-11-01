@@ -38,6 +38,14 @@ class SqlViewerController extends Controller
                         ];
                     });
                 }
+            }elseif(config('database.default') === 'pgsql'){
+                $tables = DB::select("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
+                $tables = collect($tables)->map(function ($table) {
+                    return [
+                        'name' => $table->table_name ?? '',
+                        'columns' => Schema::getColumns($table->table_name),
+                    ];
+                });
             }
 
             return response()->json(['tables' => $tables]);

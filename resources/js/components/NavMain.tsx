@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 interface Column {
   name: string;
   type: string;
+  type_name?: string;
 }
 
 interface Table {
@@ -75,14 +76,14 @@ export function NavMain({
                       </SidebarMenuAction>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <SidebarMenuSub>
+                      <SidebarMenuSub className="pr-0 mr-0">
                         {item.columns?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.name}>
                             <SidebarMenuSubButton asChild>
                               <div className="flex justify-between">
                                 {subItem.name}{" "}
                                 <Badge variant="secondary">
-                                  {subItem.type}
+                                  {subItem.type_name || subItem.type}
                                 </Badge>
                               </div>
                             </SidebarMenuSubButton>

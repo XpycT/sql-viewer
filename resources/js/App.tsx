@@ -61,7 +61,7 @@ function App() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <ResizablePanelGroup direction="vertical">
-              <ResizablePanel className='p-0' defaultSize={50} minSize={20}>
+              <ResizablePanel className='p-0' defaultSize={40} minSize={20}>
                 <QueryEditor
                   query={query}
                   onQueryChange={setQuery}
@@ -74,7 +74,7 @@ function App() {
               <ResizableHandle withHandle />
               </div>
 
-              <ResizablePanel defaultSize={50} minSize={20}>
+              <ResizablePanel defaultSize={60} minSize={20}>
                 {error ? (
                     <div className="p-4">
                         <Alert variant="destructive">

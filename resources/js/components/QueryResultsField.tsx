@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export function QueryResultsField({value, isHidden}: {value: string, isHidden: boolean}) {
+export function QueryResultsField({value, isHidden}: {value: any, isHidden: boolean}) {
 
     const [ hidden, setHidden ] = useState(isHidden);
 

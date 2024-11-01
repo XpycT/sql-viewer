@@ -11,7 +11,6 @@ import {
 import {
   ArrowDown,
   ArrowUp,
-  ArrowUpDown,
   Download,
   Settings2,
   ChevronDownIcon,

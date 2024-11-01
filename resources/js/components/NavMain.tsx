@@ -31,6 +31,18 @@ interface Table {
   columns: Column[];
 }
 
+function NavMainSkeleton() {
+    return (
+      <>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <SidebarMenuItem key={index}>
+            <SidebarMenuSkeleton showIcon />
+          </SidebarMenuItem>
+        ))}
+      </>
+    )
+  }
+
 export function NavMain({
   items,
   loading,
@@ -42,14 +54,8 @@ export function NavMain({
     <SidebarGroup>
       <SidebarGroupLabel>Tables ({items.length || 0})</SidebarGroupLabel>
       <SidebarMenu>
-        {loading &&
-          Array.from({ length: 10 }).map((_, index) => (
-            <SidebarMenuItem key={index}>
-              <SidebarMenuSkeleton />
-            </SidebarMenuItem>
-          ))}
-        {!loading &&
-          items.map((item) => (
+        {loading && <NavMainSkeleton />}
+        {!loading && items.map((item) => (
             <Collapsible key={item.name} asChild>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip={item.name}>

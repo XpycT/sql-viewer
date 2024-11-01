@@ -19,7 +19,7 @@ function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return localStorage.getItem('theme') as 'light' | 'dark' || 'light';
   });
-  const [query, setQuery] = useState('SELECT * FROM users;');
+  const [query, setQuery] = useState('');
   const [queryResult, setQueryResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 

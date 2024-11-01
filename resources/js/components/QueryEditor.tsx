@@ -117,6 +117,7 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
       <div className="flex-1 border rounded-md overflow-hidden">
         <CodeMirror
           value={query}
+          placeholder={'Use ALT+ENTER to execute query'}
           height="100%"
           style={{ height: '100%' }}
           extensions={[sql()]}

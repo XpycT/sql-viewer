@@ -46,9 +46,13 @@ function App() {
     setQueryResult(null);
   };
 
+  const handleTableSelect = (tableName: string) => {
+    setQuery(`SELECT * FROM ${tableName};`);
+  };
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar onTableSelect={handleTableSelect} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex flex-1 items-center gap-2 px-4">

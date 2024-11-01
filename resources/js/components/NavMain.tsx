@@ -46,9 +46,11 @@ function NavMainSkeleton() {
 export function NavMain({
   items,
   loading,
+  onTableSelect,
 }: {
   items: Table[];
   loading: boolean;
+  onTableSelect: (tableName: string) => void;
 }) {
   return (
     <SidebarGroup>
@@ -59,7 +61,7 @@ export function NavMain({
             <Collapsible key={item.name} asChild>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip={item.name}>
-                  <a href="#">
+                  <a href="#" onClick={() => onTableSelect(item.name)}>
                     <Table />
                     <span>{item.name}</span>
                   </a>

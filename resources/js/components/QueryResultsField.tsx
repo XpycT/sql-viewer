@@ -8,7 +8,9 @@ export function QueryResultsField({value, isHidden}: {value: any, isHidden: bool
 
     return (
       <>
-      {hidden ? '••••••' : value}
+      {hidden ? '••••••' : (
+        <span title={value} className="text-ellipsis overflow-hidden max-w-[300px]">{value}</span>
+      )}
       {isHidden && (
         <Button
           variant="ghost"

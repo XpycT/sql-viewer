@@ -22,7 +22,7 @@ interface Table {
     columns: Column[];
   }
 
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ onTableSelect, ...props }: { onTableSelect: (tableName: string) => void } & ComponentProps<typeof Sidebar>) {
     const [tables, setTables] = useState<Table[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -61,7 +61,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={tables} loading={loading} />
+        <NavMain items={tables} loading={loading} onTableSelect={onTableSelect}  />
       </SidebarContent>
     </Sidebar>
   )

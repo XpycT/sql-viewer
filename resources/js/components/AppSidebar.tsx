@@ -61,7 +61,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={tables} />
+        <NavMain items={tables} loading={loading} />
       </SidebarContent>
     </Sidebar>
   )

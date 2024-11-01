@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Route;
 use Xpyct\SqlViewer\Console\Commands\InstallCommand;
 class SqlViewerServiceProvider extends ServiceProvider
 {
+    public static function basePath(string $path): string
+    {
+        return __DIR__.'/..'.$path;
+    }
     public function register(): void
     {
         $this->mergeConfigFrom(

@@ -51,7 +51,7 @@ function App() {
       <header className="flex items-center justify-between px-6 py-4 border-b bg-background">
         <div className="flex items-center space-x-2">
           <DatabaseIcon className="h-6 w-6" />
-          <h1 className="text-xl font-bold">SQL Explorer</h1>
+          <h1 className="text-xl font-bold">SQL Viewer </h1>
         </div>
         <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </header>

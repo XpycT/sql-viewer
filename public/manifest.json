@@ -1,11 +1,11 @@
 {
   "resources/css/app.css": {
-    "file": "app.9-znqev5.css",
+    "file": "app.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/main.tsx": {
-    "file": "main.CrID5jdR.js",
+    "file": "main.js",
     "name": "main",
     "src": "resources/js/main.tsx",
     "isEntry": true

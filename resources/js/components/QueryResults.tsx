@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { DataTablePagination } from "./data-table-pagination";
 import { QueryResultsField } from "./QueryResultsField";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 interface QueryResultsProps {
   results: {
@@ -69,16 +70,17 @@ export function QueryResults({ results }: QueryResultsProps) {
           return (
             <Button
               variant="ghost"
+              className="flex items-center -ml-3 h-8"
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
             >
-              {col}
+              <span>{col}</span>
               {{
                 asc: <ArrowUp className="ml-2 h-4 w-4" />,
                 desc: <ArrowDown className="ml-2 h-4 w-4" />,
               }[column.getIsSorted() as string] ?? (
-                <ArrowUpDown className="ml-2 h-4 w-4 text-gray-300 dark:text-gray-700" />
+                <CaretSortIcon className="ml-2 h-4 w-4" />
               )}
             </Button>
           );

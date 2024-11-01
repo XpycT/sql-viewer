@@ -17,19 +17,29 @@ class SqlViewerController extends Controller
 
     public function getTables()
     {
+        $tables = [];
         try {
-            $isSqlite = config('database.default') === 'sqlite';
-            if($isSqlite) {
+            if(config('database.default') === 'sqlite') {
                 $tables = DB::select("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
-            }else{
-                $tables = DB::select('SHOW TABLES;');
+                $tables = collect($tables)->map(function ($table) {
+                    return [
+                        'name' => $table->name ?? '',
+                        'columns' => Schema::getColumns($table->name),
+                    ];
+                });
+            }elseif(config('database.default') === 'mysql'){
+                $tables = DB::select('SHOW TABLES');
+                if(!empty($tables)) {
+                    $tables = array_map('current', $tables);
+                    $tables = collect($tables)->map(function ($table) {
+                        return [
+                            'name' => $table,
+                            'columns' => Schema::getColumns($table),
+                        ];
+                    });
+                }
             }
-            $tables = collect($tables)->map(function ($table) {
-                return [
-                    'name' => $table->name ?? '',
-                    'columns' => Schema::getColumns($table->name),
-                ];
-            });
+
             return response()->json(['tables' => $tables]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

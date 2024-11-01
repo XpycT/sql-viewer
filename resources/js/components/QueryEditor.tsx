@@ -24,7 +24,7 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
 
   const executeQuery = async (sql: string) => {
     try {
-      const data = await fetchQuery(sql); // Используйте функцию из API
+      const data = await fetchQuery(sql);
       onQueryResult(data);
       toast({
         title: 'Executed',

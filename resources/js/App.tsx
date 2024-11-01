@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { DatabaseIcon } from 'lucide-react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { Sidebar } from '@/components/Sidebar';
 import { QueryEditor } from '@/components/QueryEditor';
 import { QueryResults } from '@/components/QueryResults';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Toaster } from '@/components/ui/toaster';
 import { AlertCircle } from "lucide-react"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
+import { Separator } from "@/components/ui/separator"
 
 import {
   Alert,
@@ -18,7 +19,6 @@ function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return localStorage.getItem('theme') as 'light' | 'dark' || 'light';
   });
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [query, setQuery] = useState('SELECT * FROM users;');
   const [queryResult, setQueryResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,21 +47,21 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen ${theme}`}>
-      <header className="flex items-center justify-between px-6 py-4 border-b bg-background">
-        <div className="flex items-center space-x-2">
-          <DatabaseIcon className="h-6 w-6" />
-          <h1 className="text-xl font-bold">SQL Viewer </h1>
-        </div>
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
-      </header>
-
-      <div className="flex">
-        <Sidebar onCollapsedChange={setIsSidebarCollapsed} />
-        <main className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'ml-[80px]' : 'ml-[250px]'}`}>
-          <div className="h-[calc(100vh-4rem)] flex flex-col">
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2">
+          <div className="flex flex-1 items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+          </div>
+          <div className="ml-auto px-3">
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <ResizablePanelGroup direction="vertical">
-              <ResizablePanel defaultSize={50}>
+              <ResizablePanel className='p-0' defaultSize={50} minSize={20}>
                 <QueryEditor
                   query={query}
                   onQueryChange={setQuery}
@@ -70,9 +70,11 @@ function App() {
                 />
               </ResizablePanel>
 
-              <ResizableHandle />
+              <div>
+              <ResizableHandle withHandle />
+              </div>
 
-              <ResizablePanel defaultSize={50}>
+              <ResizablePanel defaultSize={50} minSize={20}>
                 {error ? (
                     <div className="p-4">
                         <Alert variant="destructive">
@@ -88,12 +90,11 @@ function App() {
                 )}
               </ResizablePanel>
             </ResizablePanelGroup>
-          </div>
-        </main>
-      </div>
-      <Toaster />
-    </div>
-  );
+        </div>
+        <Toaster />
+      </SidebarInset>
+    </SidebarProvider>
+  )
 }
 
 export default App;

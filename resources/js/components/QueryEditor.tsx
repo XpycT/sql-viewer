@@ -103,7 +103,7 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
   }, []);
 
   return (
-    <div className="h-full flex flex-col p-4 bg-background">
+    <div className="h-full flex flex-col py-4 bg-background">
       <div className="flex justify-end space-x-2 mb-2">
         <Button variant="outline" size="sm" onClick={downloadQuery}>
           <Download className="h-4 w-4 mr-2" />

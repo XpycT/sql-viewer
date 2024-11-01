@@ -127,7 +127,7 @@ export function QueryResults({ results }: QueryResultsProps) {
   };
 
   return (
-    <div className="h-full p-4 bg-background">
+    <div className="h-full py-4 bg-background">
       <div className="flex justify-end space-x-2 mb-4">
         <Button variant="outline" size="sm" onClick={exportToCsv}>
           <Download className="h-4 w-4 mr-2" />

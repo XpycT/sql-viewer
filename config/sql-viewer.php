@@ -45,9 +45,9 @@ return [
      * Forbidden actions in SQL queries
      */
     'forbidden_actions' => [
-        'drop',
-        'truncate',
-        'delete',
-        'insert',
+        'DROP',
+        'TRUNCATE',
+        'DELETE',
+        'CREATE',
     ],
 ];

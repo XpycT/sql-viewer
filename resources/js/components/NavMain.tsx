@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Table } from "lucide-react";
+import { ChevronRight, Table as TableIcon } from "lucide-react";
 
 import {
   Collapsible,
@@ -20,17 +20,7 @@ import {
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-
-interface Column {
-  name: string;
-  type: string;
-  type_name?: string;
-}
-
-interface Table {
-  name: string;
-  columns: Column[];
-}
+import { Table } from '@/types/table';
 
 function NavMainSkeleton() {
     return (
@@ -49,25 +39,26 @@ export function NavMain({
   loading,
   onTableSelect,
 }: {
-  items: Table[];
+  items: Table;
   loading: boolean;
   onTableSelect: (tableName: string) => void;
 }) {
+    // return null;
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Tables ({items.length || 0})</SidebarGroupLabel>
+      <SidebarGroupLabel>Tables ({Object.keys(items).length || 0})</SidebarGroupLabel>
       <SidebarMenu>
         {loading && <NavMainSkeleton />}
-        {!loading && items.map((item) => (
-            <Collapsible key={item.name} asChild>
+        {!loading && Object.keys(items).map((item) => (
+            <Collapsible key={item} asChild>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={item.name}>
-                  <a href="#" onClick={() => onTableSelect(item.name)}>
-                    <Table />
-                    <span>{item.name}</span>
+                <SidebarMenuButton asChild tooltip={item}>
+                  <a href="#" onClick={() => onTableSelect(item)}>
+                    <TableIcon />
+                    <span>{item}</span>
                   </a>
                 </SidebarMenuButton>
-                {item.columns?.length ? (
+                {items[item]?.length ? (
                   <>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuAction className="data-[state=open]:rotate-90">
@@ -77,14 +68,14 @@ export function NavMain({
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub className="pr-0 mr-0">
-                        {item.columns?.map((subItem) => (
+                        {items[item]?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.name}>
                             <SidebarMenuSubButton asChild>
                               <div className="flex justify-between">
                                 {subItem.name}{" "}
-                                <Badge variant="secondary">
-                                  {subItem.type_name || subItem.type}
-                                </Badge>
+                                {subItem.type_name && <Badge variant="secondary">
+                                  {subItem.type_name}
+                                </Badge>}
                               </div>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

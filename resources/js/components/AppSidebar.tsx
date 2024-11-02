@@ -11,19 +11,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { fetchTables } from '@/api';
-
-interface Column {
-    name: string;
-    type: string;
-  }
-
-interface Table {
-    name: string;
-    columns: Column[];
-  }
+import { Table } from '@/types/table';
 
 export function AppSidebar({ onTableSelect, ...props }: { onTableSelect: (tableName: string) => void } & ComponentProps<typeof Sidebar>) {
-    const [tables, setTables] = useState<Table[]>([]);
+    const [tables, setTables] = useState<Table>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

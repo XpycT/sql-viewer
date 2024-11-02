@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
+use Xpyct\SqlViewer\Services\DatabaseStructureService;
 
 class SqlViewerController extends Controller
 {
@@ -18,36 +19,8 @@ class SqlViewerController extends Controller
     public function getTables()
     {
         try {
-            $tables = [];
-            $dbType = config('database.default');
-            if($dbType === 'sqlite') {
-                $tables = DB::select("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
-                $tables = collect($tables)->map(function ($table) {
-                    return [
-                        'name' => $table->name ?? '',
-                        'columns' => Schema::getColumns($table->name),
-                    ];
-                });
-            }elseif($dbType === 'mysql'){
-                $tables = DB::select('SHOW TABLES');
-                if(!empty($tables)) {
-                    $tables = array_map('current', $tables);
-                    $tables = collect($tables)->map(function ($table) {
-                        return [
-                            'name' => $table,
-                            'columns' => Schema::getColumns($table),
-                        ];
-                    });
-                }
-            }elseif($dbType === 'pgsql'){
-                $tables = DB::select("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
-                $tables = collect($tables)->map(function ($table) {
-                    return [
-                        'name' => $table->table_name ?? '',
-                        'columns' => Schema::getColumns($table->table_name),
-                    ];
-                });
-            }
+            $service = new DatabaseStructureService();
+            $tables = $service->getDatabaseStructure();
             return response()->json(['tables' => $tables]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

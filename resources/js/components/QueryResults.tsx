@@ -45,21 +45,6 @@ interface QueryResultsProps {
 export function QueryResults({ results }: QueryResultsProps) {
   const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [hiddenFields, setHiddenFields] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    const initHiddenFields = results?.columns.reduce((acc, col) => {
-      const shouldBeHidden = window.sqlViewerConfig?.hiddenFields?.includes(
-        col.toLowerCase()
-      );
-      if (shouldBeHidden) {
-        acc[col] = true;
-      }
-      return acc;
-    }, {} as Record<string, boolean>);
-
-    setHiddenFields(initHiddenFields || {});
-  }, [results?.columns]);
 
   const columns = useMemo<ColumnDef<any>[]>(
     () =>
@@ -88,12 +73,12 @@ export function QueryResults({ results }: QueryResultsProps) {
           const value = getValue();
           return (
             <div className="flex items-center justify-between">
-              <QueryResultsField value={value} isHidden={hiddenFields[col]} />
+                <span title={value} className="text-ellipsis overflow-hidden max-w-[300px]">{value}</span>
             </div>
           );
         },
       })) || [],
-    [results?.columns, hiddenFields]
+    [results?.columns]
   );
 
   const table = useReactTable({
@@ -101,10 +86,8 @@ export function QueryResults({ results }: QueryResultsProps) {
     columns,
     state: {
       sorting,
-      columnVisibility: hiddenFields,
     },
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setHiddenFields,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

@@ -23,25 +23,6 @@ return [
     ],
 
     /*
-     * These emails will be allowed to access the SqlViewer.
-     */
-    'allowed_emails' => [
-        // 'admin@example.com',
-    ],
-
-    /*
-     * These fields will be hidden (marked with *) from the SqlViewer result table by default.
-     */
-    'hidden_fields' => [
-        'password',
-        'token',
-        'secret',
-        'api_key',
-        'credit_card',
-        'card_number'
-    ],
-
-    /*
      * Forbidden actions in SQL queries
      */
     'forbidden_actions' => [
@@ -50,4 +31,9 @@ return [
         'DELETE',
         'CREATE',
     ],
+
+    /*
+     * Maximum number of rows that can be returned from a query (add it to the LIMIT clause)
+     */
+    'max_limit' => 100,
 ];

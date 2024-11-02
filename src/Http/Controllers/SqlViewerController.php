@@ -4,9 +4,11 @@ namespace Xpyct\SqlViewer\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use Xpyct\SqlViewer\Services\DatabaseStructureService;
+use PHPSQLParser\PHPSQLParser;
+use PHPSQLParser\PHPSQLCreator;
+use Xpyct\SqlViewer\Services\SqlQueryWrapper;
 
 class SqlViewerController extends Controller
 {
@@ -36,11 +38,14 @@ class SqlViewerController extends Controller
                 return response()->json(['error' => 'Empty query'], 400);
             }
 
-            $query = trim(preg_replace('/--.*$/m', '', $query)); // remove comments
+            $wrapper = new SqlQueryWrapper();
+            $query = $wrapper
+                ->setMaxLimit(config('sql-viewer.max_limit'))
+                ->process($query);
 
             foreach (config('sql-viewer.forbidden_actions') as $forbiddenAction) {
-                if (stripos($query, $forbiddenAction) !== false) {
-                    return response()->json(['error' => 'Forbidden action: ' . $forbiddenAction], 403);
+                if (in_array(strtolower($forbiddenAction), array_map('strtolower', array_keys($wrapper->getParsedStructure())))) {
+                    return response()->json(['error' => 'Forbidden action: ' . strtoupper($forbiddenAction)], 403);
                 }
             }
 

@@ -2,14 +2,12 @@
 
 namespace Xpyct\SqlViewer\Services;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
 class DatabaseStructureService
 {
-    private $connection;
-
-    private function getSchemaManager(): AbstractSchemaManager
+    private function getConnection(): Connection
     {
         $dbType = config('database.default');
         $driver = match ($dbType) {
@@ -28,14 +26,15 @@ class DatabaseStructureService
         if ($dbType === 'sqlite') {
             $connectionParams['path'] = config("database.connections.$dbType.database");
         }
-        $this->connection = DriverManager::getConnection($connectionParams);
-        return $this->connection->createSchemaManager();
+        $connection = DriverManager::getConnection($connectionParams);
+        return $connection;
     }
 
     public function getDatabaseStructure(): array
     {
         $structure = [];
-        $schemaManager = $this->getSchemaManager();
+        $connection = $this->getConnection();
+        $schemaManager = $connection->createSchemaManager();
 
         $tables = $schemaManager->listTables();
         foreach ($tables as $table) {
@@ -46,7 +45,7 @@ class DatabaseStructureService
 
             foreach ($columns as $column) {
                 try{
-                    $type_name = $column->getType()->getSQLDeclaration([], $this->connection->getDatabasePlatform());
+                    $type_name = $column->getType()->getSQLDeclaration([], $connection->getDatabasePlatform());
                     // fix for long names
                     $type_name = match (get_class($column->getType())) {
                         \Doctrine\DBAL\Types\DateTimeType::class => 'TIMESTAMP',

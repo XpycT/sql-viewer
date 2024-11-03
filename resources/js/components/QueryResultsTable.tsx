@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import {
   ColumnDef,
   flexRender,
@@ -9,11 +10,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  ArrowDown,
-  ArrowUp,
+  ArrowDownNarrowWideIcon,
+  ArrowUpNarrowWideIcon,
+  ArrowUpDownIcon,
+  ChevronDownIcon,
   Download,
   Settings2,
-  ChevronDownIcon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -29,11 +31,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { DataTablePagination } from "./data-table-pagination";
-import { QueryResultsField } from "./QueryResultsField";
-import { CaretSortIcon } from "@radix-ui/react-icons";
+import { DataTablePagination } from "@/components/data-table-pagination";
+import { QueryResultsField } from "@/components/QueryResultsField";
+import { KeyIcon, ColumnIcon } from "@/components/QueryResultsDecoration";
 
 import { QueryResults } from "@/types/query-results";
 
@@ -50,22 +58,51 @@ export function QueryResultsTable({ results }: QueryResultsProps) {
       results?.columns?.map((col) => ({
         accessorKey: col,
         header: ({ column }) => {
+          const columnInfo = results?.structure?.find(
+            (column) => column.name === col
+          );
           return (
-            <Button
-              variant="ghost"
-              className="flex items-center -ml-3 h-8"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              <span>{col}</span>
-              {{
-                asc: <ArrowUp className="ml-2 h-4 w-4" />,
-                desc: <ArrowDown className="ml-2 h-4 w-4" />,
-              }[column.getIsSorted() as string] ?? (
-                <CaretSortIcon className="ml-2 h-4 w-4" />
-              )}
-            </Button>
+            <>
+              <div
+                className="flex items-center cursor-pointer"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                {{
+                  asc: <ArrowUpNarrowWideIcon className="h-4 w-4" />,
+                  desc: <ArrowDownNarrowWideIcon className="h-4 w-4" />,
+                }[column.getIsSorted() as string] ?? (
+                  <ArrowUpDownIcon className="h-4 w-4" />
+                )}
+              </div>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="flex cursor-pointer items-center space-x-1">
+                    <span className="max-w-[200px] overflow-hidden truncate text-ellipsis whitespace-nowrap">
+                      {col}
+                    </span>
+                    {columnInfo && <ColumnIcon column={columnInfo} />}
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent className="text-balance break-words bg-gray-100 dark:bg-gray-700">
+                  <div className="mb-1 flex items-center space-x-1">
+                    <p className="text-sm font-medium">{col}</p>
+                    <KeyIcon column={columnInfo} />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Badge className="block w-full self-start text-center text-xs font-semibold">
+                      {columnInfo?.type_name || "Unknown"}
+                    </Badge>
+                    {columnInfo?.nullable && (
+                      <Badge className="block w-full self-start text-center text-xs font-semibold">
+                        NULLABLE
+                      </Badge>
+                    )}
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            </>
           );
         },
         cell: ({ getValue }) => {
@@ -170,13 +207,21 @@ export function QueryResultsTable({ results }: QueryResultsProps) {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
+                      <TableHead
+                        key={header.id}
+                        className={cn(
+                            header.id === "id" ? "min-w-[50px]" : "min-w-[150px]",
+                        )}
+                      >
+                        <div className="flex items-center gap-1">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
                               header.getContext()
                             )}
+                        </div>
+
                       </TableHead>
                     ))}
                   </TableRow>

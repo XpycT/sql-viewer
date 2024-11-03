@@ -64,7 +64,9 @@ class DatabaseStructureService
                     'type_name' => $type_name,
                     'length' => $column->getLength(),
                     'nullable' => !$column->getNotnull(),
-                    'default' => $column->getDefault()
+                    'default' => $column->getDefault(),
+                    'isPrimaryKey' => $table->getPrimaryKey()->getColumns() === [$column->getName()],
+                    'isForeignKey' => $table->getForeignKeys() !== [],
                 ];
 
             }

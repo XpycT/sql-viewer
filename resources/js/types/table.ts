@@ -5,6 +5,8 @@ export interface Column {
     length: number | null;
     nullable: boolean;
     default: any;
+    isPrimaryKey: boolean;
+    isForeignKey: boolean;
 }
 
 export interface Table {

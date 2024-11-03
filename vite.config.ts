@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig  } from "vite";
 import laravel from "laravel-vite-plugin";
 import react from "@vitejs/plugin-react";
 import compression from "vite-plugin-compression";
@@ -26,13 +26,16 @@ export default defineConfig({
         // chunkFileNames: '[name].js',
         // assetFileNames: '[name].[ext]'
         manualChunks(id) {
-          if (id.includes("node_modules")) {
-            return id
-              .toString()
-              .split("node_modules/")[1]
-              .split("/")[0]
-              .toString();
+          if (id.includes('node_modules')) {
+            return 'vendor';
           }
+          // if (id.includes("node_modules")) {
+          //   return id
+          //     .toString()
+          //     .split("node_modules/")[1]
+          //     .split("/")[0]
+          //     .toString();
+          // }
         },
       },
     },

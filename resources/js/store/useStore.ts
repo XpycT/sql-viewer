@@ -17,7 +17,7 @@ interface State {
   setQueryResult: (queryResult: QueryResults) => void;
 
   error: string | null;
-  setError: (error: string) => void;
+  setError: (error: string | null) => void;
 
   tables: Table;
   setTables: (tables: Table) => void;
@@ -37,7 +37,7 @@ export const useStore = create<State>()(
       setQueryResult: (queryResult: QueryResults) => set({ queryResult }),
 
       error: null,
-      setError: (error: string) => set({ error }),
+      setError: (error: string | null) => set({ error }),
 
       tables: {},
       setTables: (tables: Table) => set({ tables }),

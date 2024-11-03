@@ -23,6 +23,7 @@ export function QueryEditor({}) {
 
   const executeQuery = async (sql: string) => {
     try {
+      setError(null);
       const data = await fetchQuery(sql);
       setQueryResult(data);
       toast({

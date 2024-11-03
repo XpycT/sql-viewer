@@ -42,6 +42,7 @@ class SqlViewerController extends Controller
             $query = $wrapper
                 ->setMaxLimit(config('sql-viewer.max_limit'))
                 ->process($query);
+            // Get columns from SELECT for empty data query
             $columns = $wrapper->getColumns();
 
             foreach (config('sql-viewer.forbidden_actions') as $forbiddenAction) {
@@ -57,9 +58,12 @@ class SqlViewerController extends Controller
                 $service = new DatabaseStructureService();
                 $tableName = $wrapper->getTableName();
                 $tableStructure = $service->getTableColumns($tableName);
+
+                $columnOutput = empty($results) ? [] : array_keys((array)$results[0]);
+
                 return response()->json([
                     'type' => 'SELECT',
-                    'columns' => empty($columns) ? [] : $columns,
+                    'columns' => !empty($columnOutput) ? $columnOutput : $columns,
                     'rows' => $results,
                     'structure' => $tableStructure
                 ]);

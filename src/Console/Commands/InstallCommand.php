@@ -49,10 +49,31 @@ class InstallCommand extends Command
 
     protected function publishAssets()
     {
+        $this->clearOldPublicDirectory();
         $this->call('vendor:publish', [
             '--provider' => 'Xpyct\SqlViewer\SqlViewerServiceProvider',
             '--tag' => 'sql-viewer-assets',
             '--force' => true,
         ]);
+    }
+
+    protected function clearOldPublicDirectory()
+    {
+        $publicPath = public_path('vendor/sql-viewer');
+        if (is_dir($publicPath)) {
+            $this->deleteDirectory($publicPath);
+        }
+    }
+
+    protected function deleteDirectory($dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            (is_dir("$dir/$file")) ? $this->deleteDirectory("$dir/$file") : unlink("$dir/$file");
+        }
+        rmdir($dir);
     }
 }

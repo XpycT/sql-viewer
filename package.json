@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.18.2",
     "@codemirror/lang-sql": "^6.5.4",
     "@codemirror/language": "^6.9.3",
     "@codemirror/state": "^6.3.3",

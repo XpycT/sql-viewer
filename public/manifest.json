@@ -1,6 +1,6 @@
 {
-  "_vendor-CQPhMFzt.js": {
-    "file": "assets/vendor-CQPhMFzt.js",
+  "_vendor-BdfPXdYJ.js": {
+    "file": "assets/vendor-BdfPXdYJ.js",
     "name": "vendor"
   },
   "resources/css/app.css": {
@@ -9,12 +9,12 @@
     "isEntry": true
   },
   "resources/js/main.tsx": {
-    "file": "assets/main-nViIybRk.js",
+    "file": "assets/main-CxVrVhGB.js",
     "name": "main",
     "src": "resources/js/main.tsx",
     "isEntry": true,
     "imports": [
-      "_vendor-CQPhMFzt.js"
+      "_vendor-BdfPXdYJ.js"
     ]
   }
 }

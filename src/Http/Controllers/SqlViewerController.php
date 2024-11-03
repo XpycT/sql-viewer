@@ -53,29 +53,33 @@ class SqlViewerController extends Controller
             $results = null;
             if (stripos($query, 'select') !== false) {
                 $results = DB::select($query);
+                $service = new DatabaseStructureService();
+                $tableName = $wrapper->getTableName();
+                $tableStructure = $service->getTableColumns($tableName);
+                return response()->json([
+                    'type' => 'SELECT',
+                    'columns' => empty($results) ? [] : array_keys((array)$results[0]),
+                    'rows' => $results,
+                    'structure' => $tableStructure
+                ]);
             } elseif (stripos($query, 'update') !== false) {
+                $type = 'UPDATE';
                 DB::update($query);
             } elseif (stripos($query, 'insert') !== false) {
+                $type = 'INSERT';
                 DB::insert($query);
             } elseif (stripos($query, 'delete') !== false) {
+                $type = 'DELETE';
                 DB::delete($query);
             } else {
+                $type = 'STATEMENT';
                 DB::statement($query);
             }
 
-            // if we have results, return them
-            if (isset($results)) {
-                return response()->json([
-                    'success' => true,
-                    'columns' => empty($results) ? [] : array_keys((array)$results[0]),
-                    'rows' => $results
-                ]);
-            }
-
-            return response()->json(['success' => true, 'columns' => [], 'rows' => []]);
+            return response()->json(['type' => $type]);
 
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['type' => 'ERROR', 'error' => $e->getMessage()], 500);
         }
     }
 }

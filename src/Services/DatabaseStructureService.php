@@ -71,4 +71,10 @@ class DatabaseStructureService
         }
         return $structure;
     }
+
+    public function getTableColumns(string $tableName): array
+    {
+        $structore = $this->getDatabaseStructure();
+        return $structore[$tableName];
+    }
 }

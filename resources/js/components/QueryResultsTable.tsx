@@ -35,20 +35,19 @@ import { DataTablePagination } from "./data-table-pagination";
 import { QueryResultsField } from "./QueryResultsField";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 
+import { QueryResults } from "@/types/query-results";
+
 interface QueryResultsProps {
-  results: {
-    columns: string[];
-    rows: any[];
-  };
+  results: QueryResults | null;
 }
 
-export function QueryResults({ results }: QueryResultsProps) {
+export function QueryResultsTable({ results }: QueryResultsProps) {
   const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo<ColumnDef<any>[]>(
     () =>
-      results?.columns.map((col) => ({
+      results?.columns?.map((col) => ({
         accessorKey: col,
         header: ({ column }) => {
           return (
@@ -71,11 +70,10 @@ export function QueryResults({ results }: QueryResultsProps) {
         },
         cell: ({ getValue }) => {
           const value = getValue();
-          return (
-            <div className="flex items-center justify-between">
-                <span title={value} className="text-ellipsis overflow-hidden max-w-[300px]">{value}</span>
-            </div>
+          const columnInfo = results?.structure?.find(
+            (column) => column.name === col
           );
+          return <QueryResultsField value={value} column={columnInfo} />;
         },
       })) || [],
     [results?.columns]
@@ -93,7 +91,7 @@ export function QueryResults({ results }: QueryResultsProps) {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (!results || results.rows.length === 0) {
+  if (!results || results.rows?.length === 0) {
     return null;
   }
 
@@ -164,49 +162,62 @@ export function QueryResults({ results }: QueryResultsProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-      <Table className="w-full">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+      <div className="mb-[20px] overflow-hidden rounded-lg border border-gray-200 dark:border dark:border-gray-700">
+        <div className="overflow-x-auto">
+          <div className="relative w-full overflow-auto">
+            <Table className="w-full caption-bottom text-sm">
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="max-w-[200px] overflow-hidden text-ellipsis align-middle"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
       <DataTablePagination table={table} />
-
     </div>
   );
 }

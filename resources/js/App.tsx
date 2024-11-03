@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { QueryEditor } from '@/components/QueryEditor';
-import { QueryResults } from '@/components/QueryResults';
+import { QueryResultsTable } from '@/components/QueryResultsTable';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Toaster } from '@/components/ui/toaster';
 import { AlertCircle } from "lucide-react"
@@ -14,13 +14,14 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
+import { QueryResults } from './types/query-results';
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return localStorage.getItem('theme') as 'light' | 'dark' || 'light';
   });
   const [query, setQuery] = useState('');
-  const [queryResult, setQueryResult] = useState<any>(null);
+  const [queryResult, setQueryResult] = useState<QueryResults | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ function App() {
                         </Alert>
                     </div>
                 ) : (
-                  <QueryResults results={queryResult} />
+                  <QueryResultsTable results={queryResult} />
                 )}
               </ResizablePanel>
             </ResizablePanelGroup>

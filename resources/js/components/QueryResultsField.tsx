@@ -1,31 +1,35 @@
-import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger
+} from "@/components/ui/hover-card";
+import { Column } from '@/types/table';
 
-export function QueryResultsField({value, isHidden}: {value: any, isHidden: boolean}) {
-
-    const [ hidden, setHidden ] = useState(isHidden);
-
+export function QueryResultsField({value, column}: {value: any, column: Column}) {
+console.log('asd', column)
     return (
       <>
-      {hidden ? '••••••' : (
-        <span title={value} className="text-ellipsis overflow-hidden max-w-[300px]">{value}</span>
-      )}
-      {isHidden && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0"
-          onClick={() => {
-            setHidden(!hidden);
-          }}
-        >
-          {hidden ?
-            <EyeOff className="h-4 w-4" /> :
-            <Eye className="h-4 w-4" />
-          }
-        </Button>
-      )}
+      <div>
+      <HoverCard>
+            <HoverCardTrigger asChild>
+              <span className="block max-w-[200px] cursor-pointer hover:underline truncate text-ellipsis">
+                {value}
+              </span>
+            </HoverCardTrigger>
+            <HoverCardContent side="bottom" align="start" className="text-balance break-words bg-gray-100 dark:bg-gray-700">
+              <div className="flex flex-col justify-center gap-1">
+              <span className="max-w-full break-words">{value}</span>
+                {
+                  <Badge className="w-full text-xs font-semibold block text-center">
+                    {column.type_name || "Unknown"}
+                  </Badge>
+                }
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+
+        </div>
       </>
     );
   }

@@ -12,7 +12,6 @@
     <div id="root"></div>
     <script>
         window.sqlViewerConfig = {
-            hiddenFields: @json(config('sql-viewer.hidden_fields')),
             path: @json(config('sql-viewer.path')),
         };
     </script>

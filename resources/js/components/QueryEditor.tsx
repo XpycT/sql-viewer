@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import { sql } from '@codemirror/lang-sql';
+import { sql, MySQL, SQLite, PostgreSQL, MariaSQL } from '@codemirror/lang-sql';
 import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
 import { Download, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -114,13 +114,13 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
           Copy
         </Button>
       </div>
-      <div className="flex-1 border rounded-md overflow-hidden">
+      <div className="flex-1 border rounded-md">
         <CodeMirror
           value={query}
           placeholder={'Use ALT+ENTER to execute query'}
           height="100%"
           style={{ height: '100%' }}
-          extensions={[sql()]}
+          extensions={[MySQL, SQLite, PostgreSQL, MariaSQL, sql()]}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           ref={codeEditorRef}

@@ -73,4 +73,9 @@ class SqlQueryWrapper
         return $this->parsed;
     }
 
+    public function getTableName(): string
+    {
+        return $this->parsed['FROM'][0]['table'];
+    }
+
 }

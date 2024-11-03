@@ -51,11 +51,11 @@ function NavMainSkeleton() {
 }
 
 export function NavMain({}) {
-  const { tables, setQuery } = useStore();
+  const { tables, queryLimit, setQuery } = useStore();
 
   const handleTableSelect = (tableName: string) => {
     const columns = tables[tableName].map((column) => column.name).join(",");
-    const query = `SELECT ${columns} FROM ${tableName} LIMIT 10`;
+    const query = `SELECT ${columns} FROM ${tableName} LIMIT ${queryLimit}`;
 
     const formattedQuery = sqlFormat(query);
     setQuery(formattedQuery);

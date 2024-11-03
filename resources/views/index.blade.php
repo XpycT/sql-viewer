@@ -13,6 +13,7 @@
     <script>
         window.sqlViewerConfig = {
             path: @json(config('sql-viewer.path')),
+            max_limit: @json(config('sql-viewer.max_limit')),
         };
     </script>
 </body>

@@ -1,6 +1,6 @@
 interface Window {
   sqlViewerConfig: {
-    hiddenFields: string[];
+    max_limit: number;
     path: string;
   };
 }

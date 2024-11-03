@@ -13,6 +13,9 @@ interface State {
   query: string;
   setQuery: (query: string) => void;
 
+  queryLimit: number;
+  setQueryLimit: (queryLimit: number) => void;
+
   queryResult: QueryResults | null;
   setQueryResult: (queryResult: QueryResults) => void;
 
@@ -32,6 +35,9 @@ export const useStore = create<State>()(
 
       query: "",
       setQuery: (query: string) => set({ query }),
+
+      queryLimit: window.sqlViewerConfig.max_limit || 10,
+      setQueryLimit: (queryLimit: number) => set({ queryLimit }),
 
       queryResult: null,
       setQueryResult: (queryResult: QueryResults) => set({ queryResult }),

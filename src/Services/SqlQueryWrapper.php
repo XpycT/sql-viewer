@@ -76,7 +76,7 @@ class SqlQueryWrapper
     public function getColumns(): array
     {
         return collect($this->parsed['SELECT'])
-            ->filter(fn($column) => $column['expr_type'] === 'colref')
+            ->filter(fn($column) => in_array($column['expr_type'], ['colref', 'reserved']))
             ->map(function($column) {
                 return isset($column['alias']['name']) ? $column['alias']['name'] : $column['base_expr'];
             })

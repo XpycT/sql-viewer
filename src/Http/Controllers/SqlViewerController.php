@@ -60,6 +60,7 @@ class SqlViewerController extends Controller
                 $tableStructure = $service->getTableColumns($tableName);
 
                 $columnOutput = empty($results) ? [] : array_keys((array)$results[0]);
+                // dd($columnOutput, $columns);
 
                 return response()->json([
                     'type' => 'SELECT',

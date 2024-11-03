@@ -24,6 +24,9 @@ interface State {
 
   tables: Table;
   setTables: (tables: Table) => void;
+
+  selectedTable: string | null;
+  setSelectedTable: (selectedTable: string | null) => void;
 }
 
 export const useStore = create<State>()(
@@ -47,6 +50,9 @@ export const useStore = create<State>()(
 
       tables: {},
       setTables: (tables: Table) => set({ tables }),
+
+      selectedTable: "",
+      setSelectedTable: (selectedTable: string | null) => set({ selectedTable }),
     }),
     {
       name: "sql-viewer",

@@ -16,13 +16,12 @@ import { useStore } from "@/store/useStore";
 import {
   SQLITE_KEYWORDS,
   MYSQL_KEYWORDS,
-  POSTGRESQL_KEYWORDS,
   MARIADB_KEYWORDS,
   POSTGRES_KEYWORDS,
 } from "@/lib/sql-keywords";
 
 export function QueryEditor({}) {
-  const { query, tables, setQuery, setQueryResult, setError } = useStore();
+  const { query, tables, selectedTable, setQuery, setQueryResult, setError } = useStore();
   const { toast } = useToast();
   const codeEditorRef = useRef<any>(null);
 
@@ -103,29 +102,40 @@ export function QueryEditor({}) {
     document.documentElement.classList.contains("dark")
   );
 
+  const schema = window.sqlViewerConfig.schema || "sqlite";
+
+  let KEYWORDS = [];
+  let SqlExtension = null;
+  switch (schema) {
+    case "mysql":
+      KEYWORDS = MYSQL_KEYWORDS;
+      SqlExtension = MySQL;
+      break;
+    case "postgres":
+    case "pgsql":
+      KEYWORDS = POSTGRES_KEYWORDS;
+      SqlExtension = PostgreSQL;
+      break;
+    case "mariadb":
+      KEYWORDS = MARIADB_KEYWORDS;
+      SqlExtension = MariaSQL;
+      break;
+    case "sqlite":
+    case "sqlite3":
+    default:
+      KEYWORDS = SQLITE_KEYWORDS;
+      SqlExtension = SQLite;
+      break;
+  }
+
   const myCompletions = useCallback(
     (context: CompletionContext) => {
       const word = context.matchBefore(/\w*/);
       if (!word || (word.from === word.to && !context.explicit)) return null;
 
-      let KEYWORDS = [];
-      switch (window.sqlViewerConfig.schema) {
-        case "mysql":
-          KEYWORDS = MYSQL_KEYWORDS;
-          break;
-        case "postgres":
-        case "pgsql":
-          KEYWORDS = POSTGRES_KEYWORDS;
-          break;
-        case "mariadb":
-          KEYWORDS = MARIADB_KEYWORDS;
-          break;
-        case "sqlite":
-        case "sqlite3":
-          KEYWORDS = SQLITE_KEYWORDS;
-          break;
-        default:
-          KEYWORDS = MYSQL_KEYWORDS;
+      let columnNames: string[] = [];
+      if (selectedTable) {
+        columnNames = tables[selectedTable].map((column) => column.name);
       }
 
       const options = [
@@ -137,7 +147,7 @@ export function QueryEditor({}) {
           label: table,
           type: "table",
         })),
-        // ...columnNames.map((column) => ({ label: column, type: "column" }))
+        ...columnNames.map((column) => ({ label: column, type: "column" }))
       ];
 
       return {
@@ -146,11 +156,11 @@ export function QueryEditor({}) {
         options: options,
       };
     },
-    [tables]
+    [tables, selectedTable]
   );
 
   const extensions = useMemo(
-    () => [SQLite, sql(), autocompletion({ override: [myCompletions] })],
+    () => [SqlExtension, sql(), autocompletion({ override: [myCompletions] })],
     [myCompletions]
   );
 
@@ -173,15 +183,22 @@ export function QueryEditor({}) {
 
   return (
     <div className="h-full flex flex-col py-4 bg-background">
-      <div className="flex justify-end space-x-2 mb-2">
-        <Button variant="outline" size="sm" onClick={downloadQuery}>
-          <Download className="h-4 w-4 mr-2" />
-          Download SQL
-        </Button>
-        <Button variant="outline" size="sm" onClick={copyQuery}>
-          <Copy className="h-4 w-4 mr-2" />
-          Copy
-        </Button>
+
+      <div className="flex gap-2 justify-between items-center">
+        <div className="text-xs ">
+          <p className="text-muted-foreground">Select a table in the sidebar to add its columns to the autocomplete list.</p>
+          <p className="text-muted-foreground">Current schema: <span className="font-semibold uppercase">{schema}</span>, Selected table: <span className="font-semibold uppercase">{selectedTable || "None"}</span></p>
+        </div>
+        <div className="flex justify-end space-x-2 mb-2">
+          <Button variant="outline" size="sm" onClick={downloadQuery}>
+            <Download className="h-4 w-4 mr-2" />
+            Download SQL
+          </Button>
+          <Button variant="outline" size="sm" onClick={copyQuery}>
+            <Copy className="h-4 w-4 mr-2" />
+            Copy
+          </Button>
+        </div>
       </div>
       <div className="flex-1 border rounded-md">
         <CodeMirror

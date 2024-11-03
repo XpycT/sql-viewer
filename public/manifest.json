@@ -1,20 +1,20 @@
 {
-  "_vendor-BdfPXdYJ.js": {
-    "file": "assets/vendor-BdfPXdYJ.js",
+  "_vendor-DIItZooL.js": {
+    "file": "assets/vendor-DIItZooL.js",
     "name": "vendor"
   },
   "resources/css/app.css": {
-    "file": "assets/app-u_6s8qrM.css",
+    "file": "assets/app-Dgvx-XIc.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/main.tsx": {
-    "file": "assets/main-CxVrVhGB.js",
+    "file": "assets/main-DZd-mD8D.js",
     "name": "main",
     "src": "resources/js/main.tsx",
     "isEntry": true,
     "imports": [
-      "_vendor-BdfPXdYJ.js"
+      "_vendor-DIItZooL.js"
     ]
   }
 }

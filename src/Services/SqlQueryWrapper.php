@@ -70,12 +70,22 @@ class SqlQueryWrapper
 
     public function getParsedStructure(): array
     {
-        return $this->parsed;
+        return $this->parsed ?? [];
+    }
+
+    public function getColumns(): array
+    {
+        return collect($this->parsed['SELECT'])
+            ->filter(fn($column) => $column['expr_type'] === 'colref')
+            ->map(function($column) {
+                return isset($column['alias']['name']) ? $column['alias']['name'] : $column['base_expr'];
+            })
+            ->toArray() ?? [];
     }
 
     public function getTableName(): string
     {
-        return $this->parsed['FROM'][0]['table'];
+        return $this->parsed['FROM'][0]['table'] ?? '';
     }
 
 }

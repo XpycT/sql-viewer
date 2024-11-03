@@ -42,6 +42,7 @@ class SqlViewerController extends Controller
             $query = $wrapper
                 ->setMaxLimit(config('sql-viewer.max_limit'))
                 ->process($query);
+            $columns = $wrapper->getColumns();
 
             foreach (config('sql-viewer.forbidden_actions') as $forbiddenAction) {
                 if (in_array(strtolower($forbiddenAction), array_map('strtolower', array_keys($wrapper->getParsedStructure())))) {
@@ -58,7 +59,7 @@ class SqlViewerController extends Controller
                 $tableStructure = $service->getTableColumns($tableName);
                 return response()->json([
                     'type' => 'SELECT',
-                    'columns' => empty($results) ? [] : array_keys((array)$results[0]),
+                    'columns' => empty($columns) ? [] : $columns,
                     'rows' => $results,
                     'structure' => $tableStructure
                 ]);

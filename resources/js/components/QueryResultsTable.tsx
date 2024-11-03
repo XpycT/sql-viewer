@@ -125,7 +125,7 @@ export function QueryResultsTable({}) {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (!queryResult || queryResult.rows?.length === 0) {
+  if (!queryResult || queryResult.columns?.length === 0) {
     return null;
   }
 
@@ -247,9 +247,9 @@ export function QueryResultsTable({}) {
                   <TableRow>
                     <TableCell
                       colSpan={columns.length}
-                      className="h-24 text-center"
+                      className="h-12 text-center"
                     >
-                      No results.
+                      No data found.
                     </TableCell>
                   </TableRow>
                 )}

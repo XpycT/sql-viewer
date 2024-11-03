@@ -8,6 +8,7 @@ import { AlertCircle } from "lucide-react"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Separator } from "@/components/ui/separator"
+import { format } from "sql-formatter";
 
 import {
   Alert,
@@ -15,6 +16,20 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 import { QueryResults } from './types/query-results';
+
+function sqlFormat(code: string) {
+    try {
+      return format(code, {
+        useTabs: false,
+        keywordCase: "upper",
+        tabWidth: 2,
+        expressionWidth: 100,
+        linesBetweenQueries: 1
+      });
+    } catch {
+      return code;
+    }
+  }
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -47,8 +62,9 @@ function App() {
     setQueryResult(null);
   };
 
-  const handleTableSelect = (tableName: string) => {
-    setQuery(`SELECT * FROM ${tableName};`);
+  const handleTableSelect = (query: string) => {
+    const formattedQuery = sqlFormat(query);
+    setQuery(formattedQuery);
   };
 
   return (

@@ -13,9 +13,15 @@ import {
 import { fetchTables } from '@/api';
 import { Table } from '@/types/table';
 
-export function AppSidebar({ onTableSelect, ...props }: { onTableSelect: (tableName: string) => void } & ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ onTableSelect, ...props }: { onTableSelect: (query: string) => void } & ComponentProps<typeof Sidebar>) {
     const [tables, setTables] = useState<Table>({});
     const [loading, setLoading] = useState(true);
+
+    const handleTableSelect = (tableName: string) => {
+        const columns = tables[tableName].map((column) => column.name).join(",");
+        const query = `SELECT ${columns} FROM ${tableName} LIMIT 10`;
+      onTableSelect(query);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,7 +58,7 @@ export function AppSidebar({ onTableSelect, ...props }: { onTableSelect: (tableN
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={tables} loading={loading} onTableSelect={onTableSelect}  />
+        <NavMain items={tables} loading={loading} onTableSelect={handleTableSelect}  />
       </SidebarContent>
     </Sidebar>
   )

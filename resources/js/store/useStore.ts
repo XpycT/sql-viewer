@@ -1,9 +1,15 @@
 import { create } from "zustand";
-
+import { persist, createJSONStorage } from "zustand/middleware";
 import { Table } from "@/types/table";
 import { QueryResults } from "@/types/query-results";
 
+type Theme = "light" | "dark";
+
 interface State {
+
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+
   query: string;
   setQuery: (query: string) => void;
 
@@ -17,16 +23,32 @@ interface State {
   setTables: (tables: Table) => void;
 }
 
-export const useStore = create<State>((set) => ({
-  query: "",
-  setQuery: (query: string) => set({ query }),
+export const useStore = create<State>()(
+  persist(
+    (set) => ({
 
-  queryResult: null,
-  setQueryResult: (queryResult: QueryResults) => set({ queryResult }),
+      theme: "light",
+      setTheme: (theme: Theme) => set({ theme }),
 
-  error: null,
-  setError: (error: string) => set({ error }),
+      query: "",
+      setQuery: (query: string) => set({ query }),
 
-  tables: {},
-  setTables: (tables: Table) => set({ tables }),
-}));
+      queryResult: null,
+      setQueryResult: (queryResult: QueryResults) => set({ queryResult }),
+
+      error: null,
+      setError: (error: string) => set({ error }),
+
+      tables: {},
+      setTables: (tables: Table) => set({ tables }),
+    }),
+    {
+      name: "sql-viewer",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        theme: state.theme,
+        query: state.query
+      }),
+    }
+  )
+);

@@ -20,24 +20,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useStore } from "@/store/useStore";
 
 function App() {
-  const { error } = useStore();
-
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    return (localStorage.getItem("theme") as "light" | "dark") || "light";
-  });
+  const { error, theme } = useStore();
 
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
     }
   }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark");
-  };
 
   return (
     <SidebarProvider>
@@ -49,7 +38,7 @@ function App() {
             {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
           </div>
           <div className="ml-auto px-3">
-            <ThemeToggle theme={theme} onToggle={toggleTheme} />
+            <ThemeToggle />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

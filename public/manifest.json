@@ -181,8 +181,8 @@
     "file": "assets/w3c-keyname-Vcq4gwWv.js",
     "name": "w3c-keyname"
   },
-  "_zustand-BO23xq-5.js": {
-    "file": "assets/zustand-BO23xq-5.js",
+  "_zustand-CboUqYCA.js": {
+    "file": "assets/zustand-CboUqYCA.js",
     "name": "zustand",
     "imports": [
       "_react-CUxW9ASL.js"
@@ -194,7 +194,7 @@
     "isEntry": true
   },
   "resources/js/main.tsx": {
-    "file": "assets/main-oB64H3pH.js",
+    "file": "assets/main-CGAg9lh1.js",
     "name": "main",
     "src": "resources/js/main.tsx",
     "isEntry": true,
@@ -208,7 +208,7 @@
       "_@uiw-Cb38G46x.js",
       "_@codemirror-B5QMOryK.js",
       "_class-variance-authority-Bb4qSo10.js",
-      "_zustand-BO23xq-5.js",
+      "_zustand-CboUqYCA.js",
       "_lucide-react-s2UIoGPE.js",
       "_@tanstack-BJDKYJkY.js",
       "_sql-formatter-CbssVgxQ.js",

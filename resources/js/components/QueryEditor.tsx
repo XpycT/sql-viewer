@@ -1,71 +1,76 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { sql, MySQL, SQLite, PostgreSQL, MariaSQL } from '@codemirror/lang-sql';
-import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
-import { Download, Copy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { fetchQuery } from '@/api';
+import { useCallback, useEffect, useRef, useState } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { sql, MySQL, SQLite, PostgreSQL, MariaSQL } from "@codemirror/lang-sql";
+import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
+import { Download, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { fetchQuery } from "@/api";
 
-interface QueryEditorProps {
-  query: string;
-  onQueryChange: (query: string) => void;
-  onQueryResult: (result: any) => void;
-  onError: (error: string) => void;
-}
+import { useStore } from "@/store/useStore";
 
-export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: QueryEditorProps) {
+export function QueryEditor({}) {
+  const { query, setQuery, setQueryResult, setError } = useStore();
   const { toast } = useToast();
-  const codeEditorRef = useRef<any>(null)
+  const codeEditorRef = useRef<any>(null);
 
-  const handleChange = useCallback((value: string) => {
-    onQueryChange(value);
-  }, [onQueryChange]);
+  const handleChange = useCallback(
+    (value: string) => {
+      setQuery(value);
+    },
+    [setQuery]
+  );
 
   const executeQuery = async (sql: string) => {
     try {
       const data = await fetchQuery(sql);
-      onQueryResult(data);
+      setQueryResult(data);
       toast({
-        title: 'Executed',
-        description: 'Query executed successfully',
-      })
+        title: "Executed",
+        description: "Query executed successfully",
+      });
     } catch (error) {
-      onError(error instanceof Error ? error.message : 'Unknown error');
+      setError(error instanceof Error ? error.message : "Unknown error");
     }
   };
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.altKey && event.key === 'Enter') {
-      event.preventDefault()
-      const editor = codeEditorRef.current?.view
-      if (editor) {
-        const selection = editor.state.selection.ranges[0]
-        const selectedText = editor.state.sliceDoc(selection.from, selection.to)
-        executeQuery(selectedText || query)
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.altKey && event.key === "Enter") {
+        event.preventDefault();
+        const editor = codeEditorRef.current?.view;
+        if (editor) {
+          const selection = editor.state.selection.ranges[0];
+          const selectedText = editor.state.sliceDoc(
+            selection.from,
+            selection.to
+          );
+          executeQuery(selectedText || query);
+        }
       }
-    }
-  }, [query])
+    },
+    [query]
+  );
 
   const downloadQuery = () => {
-    const element = document.createElement('a');
-    const file = new Blob([query], { type: 'text/plain' });
+    const element = document.createElement("a");
+    const file = new Blob([query], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
-    element.download = 'query.sql';
+    element.download = "query.sql";
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
     toast({
-      title: 'Downloaded',
-      description: 'Query downloaded to downloads folder',
-    })
+      title: "Downloaded",
+      description: "Query downloaded to downloads folder",
+    });
   };
 
   async function copyTextToClipboard(text: string) {
-    if ('clipboard' in navigator) {
+    if ("clipboard" in navigator) {
       return await navigator.clipboard.writeText(text);
     } else {
-      return document.execCommand('copy', true, text);
+      return document.execCommand("copy", true, text);
     }
   }
 
@@ -73,30 +78,30 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
     try {
       await copyTextToClipboard(query);
       toast({
-        title: 'Copied',
-        description: 'Query copied to clipboard',
-      })
+        title: "Copied",
+        description: "Query copied to clipboard",
+      });
     } catch (err) {
-      console.error('Failed to copy text:', err);
+      console.error("Failed to copy text:", err);
     }
   };
 
   const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark')
+    document.documentElement.classList.contains("dark")
   );
 
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'class') {
-          setIsDark(document.documentElement.classList.contains('dark'));
+        if (mutation.attributeName === "class") {
+          setIsDark(document.documentElement.classList.contains("dark"));
         }
       });
     });
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class'],
+      attributeFilter: ["class"],
     });
 
     return () => observer.disconnect();
@@ -117,9 +122,9 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
       <div className="flex-1 border rounded-md">
         <CodeMirror
           value={query}
-          placeholder={'Use ALT+ENTER to execute query'}
+          placeholder={"Use ALT+ENTER to execute query"}
           height="100%"
-          style={{ height: '100%' }}
+          style={{ height: "100%" }}
           extensions={[MySQL, SQLite, PostgreSQL, MariaSQL, sql()]}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -127,7 +132,7 @@ export function QueryEditor({ query, onQueryChange, onQueryResult, onError }: Qu
           theme={isDark ? githubDark : githubLight}
           basicSetup={{
             lineNumbers: true,
-            allowMultipleSelections: false
+            allowMultipleSelections: false,
           }}
         />
       </div>

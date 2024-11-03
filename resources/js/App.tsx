@@ -1,75 +1,47 @@
-import { useState, useEffect } from 'react';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { QueryEditor } from '@/components/QueryEditor';
-import { QueryResultsTable } from '@/components/QueryResultsTable';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { Toaster } from '@/components/ui/toaster';
-import { AlertCircle } from "lucide-react"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/AppSidebar"
-import { Separator } from "@/components/ui/separator"
-import { format } from "sql-formatter";
-
+import { useState, useEffect } from "react";
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
-import { QueryResults } from './types/query-results';
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { QueryEditor } from "@/components/QueryEditor";
+import { QueryResultsTable } from "@/components/QueryResultsTable";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Toaster } from "@/components/ui/toaster";
+import { AlertCircle } from "lucide-react";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-function sqlFormat(code: string) {
-    try {
-      return format(code, {
-        useTabs: false,
-        keywordCase: "upper",
-        tabWidth: 2,
-        expressionWidth: 100,
-        linesBetweenQueries: 1
-      });
-    } catch {
-      return code;
-    }
-  }
+import { useStore } from "@/store/useStore";
 
 function App() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return localStorage.getItem('theme') as 'light' | 'dark' || 'light';
+  const { error } = useStore();
+
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    return (localStorage.getItem("theme") as "light" | "dark") || "light";
   });
-  const [query, setQuery] = useState('');
-  const [queryResult, setQueryResult] = useState<QueryResults | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
     }
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
+    const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark');
-  };
-
-  const handleQueryResult = (result: any) => {
-    setQueryResult(result);
-    setError(null);
-  };
-
-  const handleError = (errorMessage: string) => {
-    setError(errorMessage);
-    setQueryResult(null);
-  };
-
-  const handleTableSelect = (query: string) => {
-    const formattedQuery = sqlFormat(query);
-    setQuery(formattedQuery);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark");
   };
 
   return (
     <SidebarProvider>
-      <AppSidebar onTableSelect={handleTableSelect} />
+      <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex flex-1 items-center gap-2 px-4">
@@ -81,41 +53,34 @@ function App() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <ResizablePanelGroup direction="vertical">
-              <ResizablePanel className='p-0' defaultSize={40} minSize={20}>
-                <QueryEditor
-                  query={query}
-                  onQueryChange={setQuery}
-                  onQueryResult={handleQueryResult}
-                  onError={handleError}
-                />
-              </ResizablePanel>
+          <ResizablePanelGroup direction="vertical">
+            <ResizablePanel className="p-0" defaultSize={40} minSize={20}>
+              <QueryEditor />
+            </ResizablePanel>
 
-              <div>
+            <div>
               <ResizableHandle withHandle />
-              </div>
+            </div>
 
-              <ResizablePanel defaultSize={60} minSize={20}>
-                {error ? (
-                    <div className="p-4">
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>
-                            {error}
-                            </AlertDescription>
-                        </Alert>
-                    </div>
-                ) : (
-                  <QueryResultsTable results={queryResult} />
-                )}
-              </ResizablePanel>
-            </ResizablePanelGroup>
+            <ResizablePanel defaultSize={60} minSize={20}>
+              {error ? (
+                <div className="p-4">
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                </div>
+              ) : (
+                <QueryResultsTable />
+              )}
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
         <Toaster />
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
 
 export default App;

@@ -1,8 +1,8 @@
-import { Moon, Sun } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
+import { Moon, Sun } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface ThemeToggleProps {
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   onToggle: () => void;
 }
 
@@ -12,7 +12,7 @@ export function ThemeToggle({ theme, onToggle }: ThemeToggleProps) {
       <Sun className="h-4 w-4" />
       <Switch
         id="theme-toggle"
-        checked={theme === 'dark'}
+        checked={theme === "dark"}
         onCheckedChange={onToggle}
       />
       <Moon className="h-4 w-4" />

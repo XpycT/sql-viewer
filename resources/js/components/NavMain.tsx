@@ -20,45 +20,64 @@ import {
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import { Table } from '@/types/table';
+
+import { format } from "sql-formatter";
+import { useStore } from "@/store/useStore";
+
+function sqlFormat(code: string) {
+  try {
+    return format(code, {
+      useTabs: false,
+      keywordCase: "upper",
+      tabWidth: 2,
+      expressionWidth: 100,
+      linesBetweenQueries: 1,
+    });
+  } catch {
+    return code;
+  }
+}
 
 function NavMainSkeleton() {
-    return (
-      <>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <SidebarMenuItem key={index}>
-            <SidebarMenuSkeleton showIcon />
-          </SidebarMenuItem>
-        ))}
-      </>
-    )
-  }
+  return (
+    <>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <SidebarMenuItem key={index}>
+          <SidebarMenuSkeleton showIcon />
+        </SidebarMenuItem>
+      ))}
+    </>
+  );
+}
 
-export function NavMain({
-  items,
-  loading,
-  onTableSelect,
-}: {
-  items: Table;
-  loading: boolean;
-  onTableSelect: (tableName: string) => void;
-}) {
-    // return null;
+export function NavMain({}) {
+  const { tables, setQuery } = useStore();
+
+  const handleTableSelect = (tableName: string) => {
+    const columns = tables[tableName].map((column) => column.name).join(",");
+    const query = `SELECT ${columns} FROM ${tableName} LIMIT 10`;
+
+    const formattedQuery = sqlFormat(query);
+    setQuery(formattedQuery);
+  };
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Tables ({Object.keys(items).length || 0})</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        Tables ({Object.keys(tables).length || 0})
+      </SidebarGroupLabel>
       <SidebarMenu>
-        {loading && <NavMainSkeleton />}
-        {!loading && Object.keys(items).map((item) => (
+        {!tables && <NavMainSkeleton />}
+        {tables &&
+          Object.keys(tables).map((item) => (
             <Collapsible key={item} asChild>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip={item}>
-                  <a href="#" onClick={() => onTableSelect(item)}>
+                  <a href="#" onClick={() => handleTableSelect(item)}>
                     <TableIcon />
                     <span>{item}</span>
                   </a>
                 </SidebarMenuButton>
-                {items[item]?.length ? (
+                {tables[item]?.length ? (
                   <>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuAction className="data-[state=open]:rotate-90">
@@ -68,14 +87,16 @@ export function NavMain({
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub className="pr-0 mr-0">
-                        {items[item]?.map((subItem) => (
+                        {tables[item]?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.name}>
                             <SidebarMenuSubButton asChild>
                               <div className="flex justify-between">
                                 {subItem.name}{" "}
-                                {subItem.type_name && <Badge variant="secondary">
-                                  {subItem.type_name}
-                                </Badge>}
+                                {subItem.type_name && (
+                                  <Badge variant="secondary">
+                                    {subItem.type_name}
+                                  </Badge>
+                                )}
                               </div>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

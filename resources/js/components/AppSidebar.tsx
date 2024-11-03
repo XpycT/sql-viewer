@@ -1,7 +1,7 @@
-import { useState, useEffect, ComponentProps } from 'react';
-import {  DatabaseIcon } from "lucide-react"
+import { useEffect, ComponentProps } from "react";
+import { DatabaseIcon } from "lucide-react";
 
-import { NavMain } from "@/components/NavMain"
+import { NavMain } from "@/components/NavMain";
 import {
   Sidebar,
   SidebarContent,
@@ -9,34 +9,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { fetchTables } from '@/api';
-import { Table } from '@/types/table';
+} from "@/components/ui/sidebar";
+import { fetchTables } from "@/api";
+import { useStore } from "@/store/useStore";
 
-export function AppSidebar({ onTableSelect, ...props }: { onTableSelect: (query: string) => void } & ComponentProps<typeof Sidebar>) {
-    const [tables, setTables] = useState<Table>({});
-    const [loading, setLoading] = useState(true);
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+  const { setTables } = useStore();
 
-    const handleTableSelect = (tableName: string) => {
-        const columns = tables[tableName].map((column) => column.name).join(",");
-        const query = `SELECT ${columns} FROM ${tableName} LIMIT 10`;
-      onTableSelect(query);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchTables();
+        setTables(data);
+      } catch (error) {
+        console.error("Ошибка при загрузке таблиц:", error);
+      }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const data = await fetchTables();
-            setTables(data);
-          } catch (error) {
-            console.error('Ошибка при загрузке таблиц:', error);
-          } finally {
-            setLoading(false);
-          }
-        };
-
-        fetchData();
-      }, []);
+    fetchData();
+  }, []);
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -58,8 +49,8 @@ export function AppSidebar({ onTableSelect, ...props }: { onTableSelect: (query:
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={tables} loading={loading} onTableSelect={handleTableSelect}  />
+        <NavMain />
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

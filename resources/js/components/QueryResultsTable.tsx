@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import {
   ColumnDef,
@@ -43,22 +43,19 @@ import { DataTablePagination } from "@/components/data-table-pagination";
 import { QueryResultsField } from "@/components/QueryResultsField";
 import { KeyIcon, ColumnIcon } from "@/components/QueryResultsDecoration";
 
-import { QueryResults } from "@/types/query-results";
+import { useStore } from "@/store/useStore";
 
-interface QueryResultsProps {
-  results: QueryResults | null;
-}
-
-export function QueryResultsTable({ results }: QueryResultsProps) {
+export function QueryResultsTable({}) {
   const { toast } = useToast();
+  const { queryResult } = useStore();
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo<ColumnDef<any>[]>(
     () =>
-      results?.columns?.map((col) => ({
+      queryResult?.columns?.map((col) => ({
         accessorKey: col,
         header: ({ column }) => {
-          const columnInfo = results?.structure?.find(
+          const columnInfo = queryResult?.structure?.find(
             (column) => column.name === col
           );
           return (
@@ -107,17 +104,17 @@ export function QueryResultsTable({ results }: QueryResultsProps) {
         },
         cell: ({ getValue }) => {
           const value = getValue();
-          const columnInfo = results?.structure?.find(
+          const columnInfo = queryResult?.structure?.find(
             (column) => column.name === col
           );
           return <QueryResultsField value={value} column={columnInfo} />;
         },
       })) || [],
-    [results?.columns]
+    [queryResult?.columns]
   );
 
   const table = useReactTable({
-    data: results?.rows || [],
+    data: queryResult?.rows || [],
     columns,
     state: {
       sorting,
@@ -128,7 +125,7 @@ export function QueryResultsTable({ results }: QueryResultsProps) {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (!results || results.rows?.length === 0) {
+  if (!queryResult || queryResult.rows?.length === 0) {
     return null;
   }
 
@@ -210,18 +207,17 @@ export function QueryResultsTable({ results }: QueryResultsProps) {
                       <TableHead
                         key={header.id}
                         className={cn(
-                            header.id === "id" ? "min-w-[50px]" : "min-w-[150px]",
+                          header.id === "id" ? "min-w-[50px]" : "min-w-[150px]"
                         )}
                       >
                         <div className="flex items-center gap-1">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
                         </div>
-
                       </TableHead>
                     ))}
                   </TableRow>
